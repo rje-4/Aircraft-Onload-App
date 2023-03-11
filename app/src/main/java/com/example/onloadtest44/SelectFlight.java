@@ -18,6 +18,9 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+//Written by Ryan Elias. Uploaded March 11, 2023. Based on FedEx Express AutoVerify Aircraft Onload Application.
+
+
 public class SelectFlight extends AppCompatActivity {
 
     @SuppressLint({"ResourceType", "SetTextI18n"})

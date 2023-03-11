@@ -31,9 +31,12 @@ import org.json.JSONObject;
 import java.util.Arrays;
 import java.util.Objects;
 
+//Written by Ryan Elias. Uploaded March 11, 2023. Based on FedEx Express AutoVerify Aircraft Onload Application.
+
+
 public class GraphicView extends AppCompatActivity {
 
-    final String PRA = "Louis Q. Marino (696969)";
+    final String PRA = "Dan Q. Marino (696969)";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

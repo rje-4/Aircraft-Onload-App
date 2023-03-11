@@ -2,6 +2,8 @@ package com.example.onloadtest44;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+//Written by Ryan Elias. Uploaded March 11, 2023. Based on FedEx Express AutoVerify Aircraft Onload Application.
+
 public class Data extends AppCompatActivity
 {
     public String[] canNames = new String[100];
