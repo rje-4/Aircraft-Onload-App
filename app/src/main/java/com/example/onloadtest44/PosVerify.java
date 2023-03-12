@@ -36,6 +36,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -43,6 +44,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class PosVerify extends AppCompatActivity {
@@ -940,7 +943,7 @@ public class PosVerify extends AppCompatActivity {
                     String enteredPos = input.getText().toString();
                     if (enteredPos.equals(finalSelectedCanPosition))
                     {
-                        //sendVerifyData(finalSavedIndex);
+                        sendVerifyPosData(finalSavedIndex);
                         wantToCloseDialog = true;
                     }
 
@@ -956,6 +959,105 @@ public class PosVerify extends AppCompatActivity {
             });
 
         }
+
+    }
+
+
+    public void sendVerifyPosData(int savedIndex)
+    {
+        //Get Data----------------------------------------------
+
+        String[] canPositions = d1.getFinalPositionArray();
+        String[] canNames = d1.getFinalNameArray();
+        String[] canWeights = d1.getFinalWeightArray();
+        String[] canInspections = d1.getFinalInspectionArray();
+
+        String position = canPositions[savedIndex];
+        String name = canNames[savedIndex];
+        String weight = canWeights[savedIndex];
+        String inspected = canInspections[savedIndex];
+        //----------------------------------------------
+
+        TableLayout tl = findViewById(R.id.main_table2);
+        int numRows = tl.getChildCount();
+
+        boolean found = false;
+
+
+        for (int r = 0; r < numRows; r++)
+        {
+            TableRow canRow = (TableRow) tl.getChildAt(r);
+            int numTextViews = canRow.getChildCount();
+
+            for (int t = 0; t < numTextViews; t++)
+            {
+                TextView text = (TextView) canRow.getChildAt(t);
+
+                if (text.getText().toString().contains(position))
+                {
+                    text.setTextColor(Color.parseColor("#178214"));
+                    text.setPaintFlags(text.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    found = true;
+                    break;
+                }
+
+            }
+
+            if (found)
+            {
+                break;
+            }
+        }
+
+        if (found)
+        {
+            String Url = "http://192.168.0.109:3000/Containers/" + savedIndex;
+
+            RequestQueue queue = Volley.newRequestQueue(PosVerify.this);
+
+            StringRequest request = new StringRequest(Request.Method.PATCH, Url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject respObj = new JSONObject(response);
+
+                        String jsonName = respObj.getString("Asset");
+                        String jsonPos = respObj.getString("Position");
+                        String jsonWeight = respObj.getString("Weight");
+                        String jsonVerified = respObj.getString("Inspected");
+                        String jsonVerifiedPos = respObj.getString("Verified");
+                        String jsonVerifier = respObj.getString("Verifier");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    // method to handle errors.
+                    Log.d("Error", "Volley Error");
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+
+                    params.put("Asset", name);
+                    params.put("Weight", weight);
+                    params.put("Position", position);
+                    params.put("Inspected", inspected);
+                    params.put("Verified", "true");
+                    params.put("Verifier", EmployeeName + " (" + EmployeeID + ")");
+
+                    return params;
+                }
+            };
+
+            queue.add(request);
+
+        }
+
 
     }
 

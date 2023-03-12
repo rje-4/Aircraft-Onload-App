@@ -12,6 +12,7 @@ public class Data extends AppCompatActivity
     public String[] canInspections = new String[100];
     public String[] canVerifications = new String[100];
 
+
     public int i = 0;
     public int j = 0;
     public int w = 0;
