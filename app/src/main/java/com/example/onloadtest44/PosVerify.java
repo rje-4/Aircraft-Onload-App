@@ -1,5 +1,7 @@
 package com.example.onloadtest44;
 
+import static android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -9,9 +11,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,6 +28,7 @@ import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -139,7 +145,7 @@ public class PosVerify extends AppCompatActivity {
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     String enteredText = String.valueOf(enterCanText.getText());
                     //WIP!!!!
-                    //verifyCanName(enteredText);
+                    verifyCanPos(enteredText);
                     enterCanText.setText("");
                     return true;
                 }
@@ -849,6 +855,108 @@ public class PosVerify extends AppCompatActivity {
 
 
         }
+    }
+
+
+    @SuppressLint("ResourceType")
+    public void verifyCanPos(String enteredText)
+    {
+        String[] canNames = d1.getFinalNameArray();
+        String[] canPositions = d1.getFinalPositionArray();
+        String[] canInspections = d1.getFinalInspectionArray();
+
+        boolean found = false;
+        String selectedCan = "";
+        String selectedCanPosition = "";
+        int savedIndex = 0;
+
+        for (int e = 0; e < canNames.length; e++)
+        {
+            if (Objects.equals(enteredText, canNames[e]))
+            {
+                if (Objects.equals(canInspections[e], "false"))
+                {
+                    Log.d("verified", "not verified");
+                    Toast.makeText(PosVerify.this, "ULD '" + canNames[e] +"' Has Not Been Inspected", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
+                else {
+                    Log.d("verified", enteredText);
+                    found = true;
+                    selectedCan = canNames[e];
+                    selectedCanPosition = canPositions[e];
+                    savedIndex = e;
+                    break;
+                }
+            }
+        }
+
+        ////////////
+
+        if (!found) {
+            Toast.makeText(PosVerify.this, "'" + enteredText + "'" + " Not Found or Unavailable", Toast.LENGTH_SHORT).show();
+        }
+
+        else {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Scan or Enter Position of " + enteredText + " Assigned to " + selectedCanPosition);
+
+            EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | TYPE_TEXT_FLAG_CAP_CHARACTERS);
+            input.getBackground().setColorFilter(Color.parseColor("#6200EE"),
+                    PorterDuff.Mode.SRC_ATOP);
+            builder.setView(input);
+
+            String finalSelectedCanPosition = selectedCanPosition;
+            builder.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            //EMPTY. OVERRIDE
+                        }
+                    });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            int finalSavedIndex = savedIndex;
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    boolean wantToCloseDialog = false;
+
+                    String enteredPos = input.getText().toString();
+                    if (enteredPos.equals(finalSelectedCanPosition))
+                    {
+                        //sendVerifyData(finalSavedIndex);
+                        wantToCloseDialog = true;
+                    }
+
+                    else
+                    {
+                        input.setError("Incorrect Position");
+                    }
+
+                    if (wantToCloseDialog) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+
+        }
+
     }
 
 
