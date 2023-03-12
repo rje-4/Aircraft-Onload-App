@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -255,10 +256,17 @@ public class PosVerify extends AppCompatActivity {
 
             //Colors -----------------------
             int textColor = Color.GRAY;
+            Typeface textStyle = Typeface.DEFAULT;
 
             if (Objects.equals(finalInspections[k], "true"))
             {
                 textColor = Color.BLUE;
+            }
+
+            if (Objects.equals(finalVerifications[k], "true"))
+            {
+                textColor = Color.parseColor("#178214");
+                textStyle = Typeface.DEFAULT_BOLD;
             }
 
             //Verification Check -----------------
@@ -334,6 +342,7 @@ public class PosVerify extends AppCompatActivity {
                 label_middle.setId(2000 + k);
                 label_middle.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                 label_middle.setTextColor(textColor);
+                label_middle.setTypeface(textStyle);
                 label_middle.setPaintFlags(label_middle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                 label_middle.setPadding(0, 50, 0, 50);
                 label_middle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -483,6 +492,7 @@ public class PosVerify extends AppCompatActivity {
                         label_right.setId(3000 + k);
                         label_right.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_right.setTextColor(textColor);
+                        label_right.setTypeface(textStyle);
                         label_right.setPaintFlags(label_right.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_right.setPadding(0, 50, 0, 50);
                         label_right.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -533,6 +543,7 @@ public class PosVerify extends AppCompatActivity {
                         label_right.setId(3500 + k);
                         label_right.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_right.setTextColor(textColor);
+                        label_right.setTypeface(textStyle);
                         label_right.setPaintFlags(label_right.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_right.setPadding(0, 50, 0, 50);
                         label_right.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -571,6 +582,7 @@ public class PosVerify extends AppCompatActivity {
                         label_right.setId(4000 + k);
                         label_right.setText(finalCanNames[k] + "\n" + "Error with D");
                         label_right.setTextColor(textColor);
+                        label_right.setTypeface(textStyle);
                         label_right.setPaintFlags(label_right.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_right.setPadding(0, 50, 0, 50);
                         label_right.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -649,6 +661,7 @@ public class PosVerify extends AppCompatActivity {
                         label_left.setId(8000 + k);
                         label_left.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_left.setTextColor(textColor);
+                        label_left.setTypeface(textStyle);
                         label_left.setPaintFlags(label_left.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_left.setPadding(0, 50, 0, 50);
                         label_left.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -692,6 +705,7 @@ public class PosVerify extends AppCompatActivity {
                         label_right.setId(9000 + k);
                         label_right.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_right.setTextColor(textColor);
+                        label_right.setTypeface(textStyle);
                         label_right.setPaintFlags(label_right.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_right.setPadding(0, 50, 0, 50);
                         label_right.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -743,6 +757,7 @@ public class PosVerify extends AppCompatActivity {
                         label_left.setId(5000 + k);
                         label_left.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_left.setTextColor(textColor);
+                        label_left.setTypeface(textStyle);
                         label_left.setPaintFlags(label_left.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_left.setPadding(0, 50, 0, 50);
                         label_left.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -784,6 +799,7 @@ public class PosVerify extends AppCompatActivity {
                         label_right.setId(6000 + k);
                         label_right.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_right.setTextColor(textColor);
+                        label_right.setTypeface(textStyle);
                         label_right.setPaintFlags(label_right.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_right.setPadding(0, 50, 0, 50);
                         label_right.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
