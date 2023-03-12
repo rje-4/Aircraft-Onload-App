@@ -69,12 +69,18 @@ public class SelectFlight extends AppCompatActivity {
 
         int finalEmployeeID = EmployeeID;
         String finalEmployeeName = EmployeeName;
+        int finalJsonFlightNum = jsonFlightNum;
+        String finalOrigin = origin;
+        String finalDest = dest;
         cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), FlightMenu.class);
                 intent.putExtra("EmployeeID", finalEmployeeID);
                 intent.putExtra("EmployeeName", finalEmployeeName);
+                intent.putExtra("flightNum", finalJsonFlightNum);
+                intent.putExtra("flightOrigin", finalOrigin);
+                intent.putExtra("flightDest", finalDest);
                 startActivity(intent);
             }
         });

@@ -21,8 +21,14 @@ public class FlightMenu extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         int EmployeeID = extras.getInt("EmployeeID");
         String EmployeeName = extras.getString("EmployeeName");
+        int flightNum = extras.getInt("flightNum");
+        String origin = extras.getString("flightOrigin");
+        String dest = extras.getString("flightDest");
+
+        getSupportActionBar().setTitle("Flight: FDX" + flightNum + " " + origin + " -> " + dest);
 
         CardView uldCheck = findViewById(R.id.uldCheck);
+        CardView posCheck = findViewById(R.id.posCheck);
 
         uldCheck.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,6 +36,19 @@ public class FlightMenu extends AppCompatActivity {
                 ProgressDialog dialog = ProgressDialog.show(FlightMenu.this, "",
                         "Loading. Please wait...", true);
                 Intent intent = new Intent(view.getContext(), ULDCheck.class);
+                intent.putExtra("EmployeeID", EmployeeID);
+                intent.putExtra("EmployeeName", EmployeeName);
+                startActivity(intent);
+                dialog.cancel();
+            }
+        });
+
+        posCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ProgressDialog dialog = ProgressDialog.show(FlightMenu.this, "",
+                        "Loading. Please wait...", true);
+                Intent intent = new Intent(view.getContext(), PosVerify.class);
                 intent.putExtra("EmployeeID", EmployeeID);
                 intent.putExtra("EmployeeName", EmployeeName);
                 startActivity(intent);

@@ -10,11 +10,13 @@ public class Data extends AppCompatActivity
     public String[] canPositions = new String[100];
     public String[] canWeights = new String[100];
     public String[] canInspections = new String[100];
+    public String[] canVerifications = new String[100];
 
     public int i = 0;
     public int j = 0;
     public int w = 0;
     public int u = 0;
+    public int v = 0;
 
     public void addToNames(String canName)
     {
@@ -40,6 +42,12 @@ public class Data extends AppCompatActivity
         u += 1;
     }
 
+    public void addToVerifications(String canVerification)
+    {
+        this.canVerifications[v] = canVerification;
+        v += 1;
+    }
+
     public String[] getFinalWeightArray()
     {
         return this.canWeights;
@@ -58,6 +66,11 @@ public class Data extends AppCompatActivity
     public String[] getFinalInspectionArray()
     {
         return this.canInspections;
+    }
+
+    public String[] getFinalVerificationArray()
+    {
+        return this.canVerifications;
     }
 
 }

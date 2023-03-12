@@ -33,5 +33,24 @@
                 android:textSize="20sp" />
         </androidx.cardview.widget.CardView>
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/posCheck"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:textAlignment="center"
+            android:layout_marginTop="30dp">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ECD6EF"
+                android:paddingTop="16dp"
+                android:text="Verify Position"
+                android:textAlignment="center"
+                android:textColor="#240065"
+                android:textSize="20sp" />
+        </androidx.cardview.widget.CardView>
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

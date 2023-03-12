@@ -11,21 +11,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.InputType;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.view.Menu;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -33,22 +29,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
-//Written by Ryan Elias. Uploaded March 11, 2023. Based on FedEx Express AutoVerify Aircraft Onload Application.
+public class PosVerify extends AppCompatActivity {
 
-public class ULDCheck extends AppCompatActivity {
     static int index = 0;
     static int positionAmount = 0;
 
@@ -57,24 +48,22 @@ public class ULDCheck extends AppCompatActivity {
     int EmployeeID = 0;
     String EmployeeName = "N/A";
 
-    static Data d1 = new Data();
+    Data d1 = ULDCheck.d1;
 
     PositionExists positionExists = new PositionExists();
 
-
-    @SuppressLint({"ResourceType", "SetTextI18n"})
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_uldcheck);
+        setContentView(R.layout.activity_pos_verify);
 
-        getSupportActionBar().setTitle("ULD Check");
+        getSupportActionBar().setTitle("Verify Position");
 
         Bundle extras = getIntent().getExtras();
         EmployeeID = extras.getInt("EmployeeID");
         EmployeeName = extras.getString("EmployeeName");
 
-        TableLayout tl = findViewById(R.id.main_table);
+        TableLayout tl = findViewById(R.id.main_table2);
 
         Runnable task = new Runnable() {
             @SuppressLint("SetTextI18n")
@@ -102,10 +91,12 @@ public class ULDCheck extends AppCompatActivity {
                 Arrays.fill(d2.canPositions, "");
                 Arrays.fill(d2.canWeights, "");
                 Arrays.fill(d2.canInspections, "");
+                Arrays.fill(d2.canVerifications, "");
                 d2.i = 0;
                 d2.j = 0;
                 d2.w = 0;
                 d2.u = 0;
+                d2.v = 0;
 
                 d1 = new Data();
 
@@ -138,7 +129,7 @@ public class ULDCheck extends AppCompatActivity {
             }
         });
 
-        EditText enterCanText = (EditText) findViewById(R.id.enteruldtext);
+        EditText enterCanText = (EditText) findViewById(R.id.enteruldtextverify);
         enterCanText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -146,7 +137,8 @@ public class ULDCheck extends AppCompatActivity {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     String enteredText = String.valueOf(enterCanText.getText());
-                    verifyCanName(enteredText);
+                    //WIP!!!!
+                    //verifyCanName(enteredText);
                     enterCanText.setText("");
                     return true;
                 }
@@ -155,7 +147,6 @@ public class ULDCheck extends AppCompatActivity {
         });
 
     }
-
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.action_menu, menu);
@@ -172,19 +163,18 @@ public class ULDCheck extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     sw.setChecked(false);
-                    Intent myIntent = new Intent(ULDCheck.this, GraphicView.class);
-                    ULDCheck.this.startActivity(myIntent);
+                    Intent myIntent = new Intent(PosVerify.this, GraphicView.class);
+                    PosVerify.this.startActivity(myIntent);
                 }
             }
         });
         return true;
     }
 
-
     @SuppressLint({"ResourceType", "SetTextI18n"})
     public void createView()
     {
-        TableLayout tl = (TableLayout) findViewById(R.id.main_table);
+        TableLayout tl = (TableLayout) findViewById(R.id.main_table2);
 
         TableRow tr_head = new TableRow(this);
         tr_head.setId(999);
@@ -205,7 +195,7 @@ public class ULDCheck extends AppCompatActivity {
 
     public void getAssetInfo() {
 
-        RequestQueue queue = Volley.newRequestQueue(ULDCheck.this);
+        RequestQueue queue = Volley.newRequestQueue(PosVerify.this);
         String Url = "http://192.168.0.109:3000/Containers/";
 
         JsonArrayRequest requestCan = new JsonArrayRequest(Request.Method.GET, Url, null, new Response.Listener<JSONArray>() {
@@ -223,11 +213,13 @@ public class ULDCheck extends AppCompatActivity {
                         String jsonCanPosition = currentCan.getString("Position");
                         String jsonCanWeight = currentCan.getString("Weight");
                         String jsonCanInspection = currentCan.getString("Inspected");
+                        String jsonCanVerify = currentCan.getString("Verified");
 
                         d1.addToNames(jsonCanName);
                         d1.addToPositions(jsonCanPosition);
                         d1.addToWeights(jsonCanWeight);
                         d1.addToInspections(jsonCanInspection);
+                        d1.addToVerifications(jsonCanVerify);
 
                         Log.d("ULD", jsonCanName + " " + jsonCanPosition);
 
@@ -235,7 +227,7 @@ public class ULDCheck extends AppCompatActivity {
 
                     catch (Exception e)
                     {
-                        Log.d("ULDCheck", "Object Array Error");
+                        Log.d("PosVerify", "Object Array Error");
                     }
                 }
 
@@ -243,7 +235,7 @@ public class ULDCheck extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("ULDCheck", "Volley Error");
+                Log.d("PosVerify", "Volley Error");
             }
         });
         queue.add(requestCan);
@@ -257,6 +249,7 @@ public class ULDCheck extends AppCompatActivity {
         String[] finalPositionNames = d1.getFinalPositionArray();
         String[] finalWeights = d1.getFinalWeightArray();
         String[] finalInspections = d1.getFinalInspectionArray();
+        String[] finalVerifications = d1.getFinalVerificationArray();
 
         for (int k = 0; k < positionAmount; k++) {
 
@@ -273,7 +266,7 @@ public class ULDCheck extends AppCompatActivity {
 
             if (Objects.equals(finalInspections[k], "true"))
             {
-                RequestQueue queue = Volley.newRequestQueue(ULDCheck.this);
+                RequestQueue queue = Volley.newRequestQueue(PosVerify.this);
                 String Url = "http://192.168.0.109:3000/Containers/" + k;
 
                 JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Url, null, new Response.Listener<JSONObject>() {
@@ -295,6 +288,33 @@ public class ULDCheck extends AppCompatActivity {
                 });
 
                 queue.add(request);
+            }
+
+            String[] verifiedPosByString = {"N/A"};
+            if (Objects.equals(finalVerifications[k], "true"))
+            {
+                RequestQueue queue = Volley.newRequestQueue(PosVerify.this);
+                String Url = "http://192.168.0.109:3000/Containers/" + k;
+
+                JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, Url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String verifier = response.getString("Verifier");
+                            verifiedPosByString[0] = verifier;
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Get Verifier", "Volley Error");
+                    }
+                });
+
+                queue.add(request2);
             }
 
             //Positioning ---------------------------------
@@ -335,9 +355,9 @@ public class ULDCheck extends AppCompatActivity {
                 label_middle.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(PosVerify.this);
                         builder1.setMessage("Position Information" +
-                                "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                 + "\nPRA: " + PRA);
                         builder1.setCancelable(true);
 
@@ -474,9 +494,9 @@ public class ULDCheck extends AppCompatActivity {
                         label_right.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View view) {
-                                AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
+                                AlertDialog.Builder builder1 = new AlertDialog.Builder(PosVerify.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -524,9 +544,9 @@ public class ULDCheck extends AppCompatActivity {
                         label_right.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View view) {
-                                AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
+                                AlertDialog.Builder builder1 = new AlertDialog.Builder(PosVerify.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -562,9 +582,9 @@ public class ULDCheck extends AppCompatActivity {
                         label_right.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View view) {
-                                AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
+                                AlertDialog.Builder builder1 = new AlertDialog.Builder(PosVerify.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -641,9 +661,9 @@ public class ULDCheck extends AppCompatActivity {
                         label_left.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View view) {
-                                AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
+                                AlertDialog.Builder builder1 = new AlertDialog.Builder(PosVerify.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -683,9 +703,9 @@ public class ULDCheck extends AppCompatActivity {
                         label_right.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View view) {
-                                AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
+                                AlertDialog.Builder builder1 = new AlertDialog.Builder(PosVerify.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -734,9 +754,9 @@ public class ULDCheck extends AppCompatActivity {
                         label_left.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View view) {
-                                AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
+                                AlertDialog.Builder builder1 = new AlertDialog.Builder(PosVerify.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -777,9 +797,9 @@ public class ULDCheck extends AppCompatActivity {
                         label_right.setOnLongClickListener(new View.OnLongClickListener() {
                             @Override
                             public boolean onLongClick(View view) {
-                                AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
+                                AlertDialog.Builder builder1 = new AlertDialog.Builder(PosVerify.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -815,191 +835,5 @@ public class ULDCheck extends AppCompatActivity {
         }
     }
 
-    public void verifyCanName(String enteredText)
-    {
-        String[] canNames = d1.getFinalNameArray();
-        String[] canWeights = d1.getFinalWeightArray();
-
-        boolean found = false;
-        String selectedCan = "";
-        String selectedCanWeight = "";
-        int savedIndex = 0;
-
-        for (int e = 0; e < canNames.length; e++)
-        {
-            if (Objects.equals(enteredText, "VOID"))
-            {
-                Toast.makeText(ULDCheck.this, "Cannot Inspect VOID Position", Toast.LENGTH_SHORT).show();
-                break;
-            }
-
-            if (Objects.equals(enteredText, canNames[e]))
-            {
-                Log.d("verified", enteredText);
-                found = true;
-                selectedCan = canNames[e];
-                selectedCanWeight = canWeights[e];
-                savedIndex = e;
-                break;
-            }
-        }
-
-        if (!found) {
-            Toast.makeText(ULDCheck.this, "'" + enteredText + "'" + " Not Found", Toast.LENGTH_SHORT).show();
-        }
-
-        else {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Scan AutoSlip or Enter Weight of " + enteredText);
-
-            EditText input = new EditText(this);
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            builder.setView(input);
-
-            String finalSelectedCanWeight = selectedCanWeight;
-            builder.setPositiveButton("OK",
-                    new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
-                            //EMPTY. OVERRIDE
-                        }
-                    });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            final AlertDialog dialog = builder.create();
-            dialog.show();
-
-            int finalSavedIndex = savedIndex;
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    boolean wantToCloseDialog = false;
-
-                    String enteredWeight = input.getText().toString();
-                    if (enteredWeight.equals(finalSelectedCanWeight))
-                    {
-                        sendVerifyData(finalSavedIndex);
-                        wantToCloseDialog = true;
-                    }
-
-                    else
-                    {
-                        input.setError("Incorrect Weight");
-                    }
-
-                    if (wantToCloseDialog) {
-                        dialog.dismiss();
-                    }
-                }
-            });
-
-        }
-
-    }
-
-    public void sendVerifyData(int savedIndex)
-    {
-        String[] canPositions = d1.getFinalPositionArray();
-        String[] canNames = d1.getFinalNameArray();
-        String[] canWeights = d1.getFinalWeightArray();
-
-        String position = canPositions[savedIndex];
-        String name = canNames[savedIndex];
-        String weight = canWeights[savedIndex];
-
-        TableLayout tl = findViewById(R.id.main_table);
-        int numRows = tl.getChildCount();
-
-        boolean found = false;
-
-        for (int r = 0; r < numRows; r++)
-        {
-            TableRow canRow = (TableRow) tl.getChildAt(r);
-            int numTextViews = canRow.getChildCount();
-
-            for (int t = 0; t < numTextViews; t++)
-            {
-                TextView text = (TextView) canRow.getChildAt(t);
-
-                if (text.getText().toString().contains(position))
-                {
-                    text.setTextColor(Color.BLUE);
-                    text.setPaintFlags(text.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                    found = true;
-                    break;
-                }
-
-            }
-
-            if (found)
-            {
-                break;
-            }
-        }
-
-        if (found)
-        {
-            String Url = "http://192.168.0.109:3000/Containers/" + savedIndex;
-
-            RequestQueue queue = Volley.newRequestQueue(ULDCheck.this);
-
-            StringRequest request = new StringRequest(Request.Method.PUT, Url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        JSONObject respObj = new JSONObject(response);
-
-                        String jsonName = respObj.getString("Asset");
-                        String jsonPos = respObj.getString("Position");
-                        String jsonWeight = respObj.getString("Weight");
-                        String jsonVerified = respObj.getString("Inspected");
-                        String jsonInspector = respObj.getString("Inspector");
-                        Log.d("verified?", name + jsonVerified);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    // method to handle errors.
-                    Log.d("Error", "Volley Error");
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<String, String>();
-
-                    params.put("Asset", name);
-                    params.put("Weight", weight);
-                    params.put("Position", position);
-                    params.put("Inspected", "true");
-                    params.put("Inspector", EmployeeName + " (" + EmployeeID + ")");
-
-                    return params;
-                }
-            };
-
-            queue.add(request);
-
-        }
-
-
-    }
-
 
 }
-
-
-
