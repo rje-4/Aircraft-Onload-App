@@ -1,5 +1,7 @@
 package com.example.onloadtest44;
 
+import static android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -9,6 +11,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.InputType;
@@ -102,10 +106,12 @@ public class ULDCheck extends AppCompatActivity {
                 Arrays.fill(d2.canPositions, "");
                 Arrays.fill(d2.canWeights, "");
                 Arrays.fill(d2.canInspections, "");
+                Arrays.fill(d2.canVerifications, "");
                 d2.i = 0;
                 d2.j = 0;
                 d2.w = 0;
                 d2.u = 0;
+                d2.v = 0;
 
                 d1 = new Data();
 
@@ -223,11 +229,13 @@ public class ULDCheck extends AppCompatActivity {
                         String jsonCanPosition = currentCan.getString("Position");
                         String jsonCanWeight = currentCan.getString("Weight");
                         String jsonCanInspection = currentCan.getString("Inspected");
+                        String jsonCanVerification = currentCan.getString("Verified");
 
                         d1.addToNames(jsonCanName);
                         d1.addToPositions(jsonCanPosition);
                         d1.addToWeights(jsonCanWeight);
                         d1.addToInspections(jsonCanInspection);
+                        d1.addToVerifications(jsonCanVerification);
 
                         Log.d("ULD", jsonCanName + " " + jsonCanPosition);
 
@@ -257,15 +265,23 @@ public class ULDCheck extends AppCompatActivity {
         String[] finalPositionNames = d1.getFinalPositionArray();
         String[] finalWeights = d1.getFinalWeightArray();
         String[] finalInspections = d1.getFinalInspectionArray();
+        String[] finalVerifications = d1.getFinalVerificationArray();
 
         for (int k = 0; k < positionAmount; k++) {
 
             //Colors -----------------------
             int textColor = Color.GRAY;
+            Typeface textStyle = Typeface.DEFAULT;
 
             if (Objects.equals(finalInspections[k], "true"))
             {
                 textColor = Color.BLUE;
+            }
+
+            if (Objects.equals(finalVerifications[k], "true"))
+            {
+                textColor = Color.parseColor("#178214");
+                textStyle = Typeface.DEFAULT_BOLD;
             }
 
             //Verification Check -----------------
@@ -298,6 +314,34 @@ public class ULDCheck extends AppCompatActivity {
                 queue.add(request);
             }
 
+            String[] verifiedPosByString = {"N/A"};
+
+            if (Objects.equals(finalVerifications[k], "true"))
+            {
+                RequestQueue queue = Volley.newRequestQueue(ULDCheck.this);
+                String Url = "http://192.168.0.109:3000/Containers/" + k;
+
+                JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, Url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String verifier = response.getString("Verifier");
+                            verifiedPosByString[0] = verifier;
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Get Verifier", "Volley Error");
+                    }
+                });
+
+                queue.add(request2);
+            }
+
             //Positioning ---------------------------------
 
             char[] characters = (finalPositionNames[k] + " ").toCharArray();
@@ -315,6 +359,7 @@ public class ULDCheck extends AppCompatActivity {
                 label_middle.setId(2000 + k);
                 label_middle.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                 label_middle.setTextColor(textColor);
+                label_middle.setTypeface(textStyle);
                 label_middle.setPaintFlags(label_middle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                 label_middle.setPadding(0, 50, 0, 50);
                 label_middle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -338,7 +383,7 @@ public class ULDCheck extends AppCompatActivity {
                     public boolean onLongClick(View view) {
                         AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
                         builder1.setMessage("Position Information" +
-                                "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                 + "\nPRA: " + PRA);
                         builder1.setCancelable(true);
 
@@ -464,6 +509,7 @@ public class ULDCheck extends AppCompatActivity {
                         label_right.setId(3000 + k);
                         label_right.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_right.setTextColor(textColor);
+                        label_right.setTypeface(textStyle);
                         label_right.setPaintFlags(label_right.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_right.setPadding(0, 50, 0, 50);
                         label_right.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -477,7 +523,7 @@ public class ULDCheck extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -514,6 +560,7 @@ public class ULDCheck extends AppCompatActivity {
                         label_right.setId(3500 + k);
                         label_right.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_right.setTextColor(textColor);
+                        label_right.setTypeface(textStyle);
                         label_right.setPaintFlags(label_right.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_right.setPadding(0, 50, 0, 50);
                         label_right.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -527,7 +574,7 @@ public class ULDCheck extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -552,6 +599,7 @@ public class ULDCheck extends AppCompatActivity {
                         label_right.setId(4000 + k);
                         label_right.setText(finalCanNames[k] + "\n" + "Error with D");
                         label_right.setTextColor(textColor);
+                        label_right.setTypeface(textStyle);
                         label_right.setPaintFlags(label_right.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_right.setPadding(0, 50, 0, 50);
                         label_right.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -565,7 +613,7 @@ public class ULDCheck extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -630,6 +678,7 @@ public class ULDCheck extends AppCompatActivity {
                         label_left.setId(8000 + k);
                         label_left.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_left.setTextColor(textColor);
+                        label_left.setTypeface(textStyle);
                         label_left.setPaintFlags(label_left.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_left.setPadding(0, 50, 0, 50);
                         label_left.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -644,7 +693,7 @@ public class ULDCheck extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -673,6 +722,7 @@ public class ULDCheck extends AppCompatActivity {
                         label_right.setId(9000 + k);
                         label_right.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_right.setTextColor(textColor);
+                        label_right.setTypeface(textStyle);
                         label_right.setPaintFlags(label_right.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_right.setPadding(0, 50, 0, 50);
                         label_right.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -686,7 +736,7 @@ public class ULDCheck extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -724,6 +774,7 @@ public class ULDCheck extends AppCompatActivity {
                         label_left.setId(5000 + k);
                         label_left.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_left.setTextColor(textColor);
+                        label_left.setTypeface(textStyle);
                         label_left.setPaintFlags(label_left.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_left.setPadding(0, 50, 0, 50);
                         label_left.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -737,7 +788,7 @@ public class ULDCheck extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -765,6 +816,7 @@ public class ULDCheck extends AppCompatActivity {
                         label_right.setId(6000 + k);
                         label_right.setText(finalCanNames[k] + "\n" + finalPositionNames[k]);
                         label_right.setTextColor(textColor);
+                        label_right.setTypeface(textStyle);
                         label_right.setPaintFlags(label_right.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         label_right.setPadding(0, 50, 0, 50);
                         label_right.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -780,7 +832,7 @@ public class ULDCheck extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(ULDCheck.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + finalPositionNames[finalK] + "\nAsset Name: " + finalCanNames[finalK] + "\nWeight: " + finalWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -855,7 +907,9 @@ public class ULDCheck extends AppCompatActivity {
             builder.setTitle("Scan AutoSlip or Enter Weight of " + enteredText);
 
             EditText input = new EditText(this);
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
+            input.getBackground().setColorFilter(Color.parseColor("#6200EE"),
+                    PorterDuff.Mode.SRC_ATOP);
             builder.setView(input);
 
             String finalSelectedCanWeight = selectedCanWeight;
@@ -954,7 +1008,7 @@ public class ULDCheck extends AppCompatActivity {
 
             RequestQueue queue = Volley.newRequestQueue(ULDCheck.this);
 
-            StringRequest request = new StringRequest(Request.Method.PUT, Url, new Response.Listener<String>() {
+            StringRequest request = new StringRequest(Request.Method.PATCH, Url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     try {

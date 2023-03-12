@@ -48,6 +48,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+//Written by Ryan Elias. Uploaded March 11, 2023. Based on FedEx Express AutoVerify Aircraft Onload Application.
+
 public class PosVerify extends AppCompatActivity {
 
     static int index = 0;
@@ -147,7 +149,6 @@ public class PosVerify extends AppCompatActivity {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     String enteredText = String.valueOf(enterCanText.getText());
-                    //WIP!!!!
                     verifyCanPos(enteredText);
                     enterCanText.setText("");
                     return true;
