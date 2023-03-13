@@ -95,6 +95,7 @@ public class GraphicView extends AppCompatActivity {
         String[] canPositions = d1.getFinalPositionArray();
         String[] canWeights = d1.getFinalWeightArray();
         String[] canInspections = d1.getFinalInspectionArray();
+        String[] canVerifications = d1.getFinalVerificationArray();
 
         for (int i = 0; i < positions; i++)
         {
@@ -104,6 +105,11 @@ public class GraphicView extends AppCompatActivity {
             if (Objects.equals(canInspections[i], "true"))
             {
                 textColor = Color.BLUE;
+            }
+
+            if (Objects.equals(canVerifications[i], "true"))
+            {
+                textColor = Color.parseColor("#178214");
             }
 
             //Verification Check -----------------
@@ -133,6 +139,34 @@ public class GraphicView extends AppCompatActivity {
                 });
 
                 queue.add(request);
+            }
+
+
+            String[] verifiedPosByString = {"N/A"};
+            if (Objects.equals(canVerifications[i], "true"))
+            {
+                RequestQueue queue = Volley.newRequestQueue(GraphicView.this);
+                String Url = "http://192.168.0.109:3000/Containers/" + i;
+
+                JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, Url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String verifier = response.getString("Verifier");
+                            verifiedPosByString[0] = verifier;
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Get Verifier", "Volley Error");
+                    }
+                });
+
+                queue.add(request2);
             }
 
             //Display --------------------------------------------
@@ -181,7 +215,7 @@ public class GraphicView extends AppCompatActivity {
                         public boolean onLongClick(View view) {
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(GraphicView.this);
                             builder1.setMessage("Position Information" +
-                                    "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                    "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                     + "\nPRA: " + PRA);
                             builder1.setCancelable(true);
 
@@ -216,7 +250,7 @@ public class GraphicView extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(GraphicView.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -249,7 +283,7 @@ public class GraphicView extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(GraphicView.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -286,7 +320,7 @@ public class GraphicView extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(GraphicView.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -379,7 +413,7 @@ public class GraphicView extends AppCompatActivity {
                             public boolean onLongClick(View view) {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(GraphicView.this);
                                 builder1.setMessage("Position Information" +
-                                        "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                        "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                         + "\nPRA: " + PRA);
                                 builder1.setCancelable(true);
 
@@ -416,7 +450,7 @@ public class GraphicView extends AppCompatActivity {
                         public boolean onLongClick(View view) {
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(GraphicView.this);
                             builder1.setMessage("Position Information" +
-                                    "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: N/A"
+                                    "\n" + "\nPosition: " + canPositions[finalK] + "\nAsset Name: " + canNames[finalK] + "\nWeight: " + canWeights[finalK1] + "lbs" + "\nInspected By: " + verifiedByString[0] + "\nPosition Verified By: " + verifiedPosByString[0]
                                     + "\nPRA: " + PRA);
                             builder1.setCancelable(true);
 

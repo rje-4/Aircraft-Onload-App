@@ -894,6 +894,67 @@ public class PosVerify extends AppCompatActivity {
                     break;
                 }
             }
+
+            else if (Objects.equals(enteredText, canPositions[e]))
+            {
+                if (Objects.equals(canNames[e], "VOID"))
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Verify " + canPositions[e] + " is VOID. Enter " + canPositions[e]);
+
+                    EditText input = new EditText(this);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | TYPE_TEXT_FLAG_CAP_CHARACTERS);
+                    input.getBackground().setColorFilter(Color.parseColor("#6200EE"),
+                            PorterDuff.Mode.SRC_ATOP);
+                    builder.setView(input);
+
+                    String finalSelectedCanPosition = selectedCanPosition;
+                    builder.setPositiveButton("OK",
+                            new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    //EMPTY. OVERRIDE
+                                }
+                            });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    final AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                    int finalSavedIndex = e;
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            boolean wantToCloseDialog = false;
+
+                            String enteredPos = input.getText().toString();
+                            if (enteredPos.equals(canPositions[finalSavedIndex]))
+                            {
+                                sendVerifyPosData(finalSavedIndex);
+                                wantToCloseDialog = true;
+                            }
+
+                            else
+                            {
+                                input.setError("Incorrect Position");
+                            }
+
+                            if (wantToCloseDialog) {
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+                }
+            }
         }
 
         ////////////
@@ -1061,6 +1122,5 @@ public class PosVerify extends AppCompatActivity {
 
 
     }
-
 
 }
