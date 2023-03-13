@@ -25,6 +25,8 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+    String IP = "192.168.0.109";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                     String location = String.valueOf(enterLocation.getText());
 
                     RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-                    String Url = "http://192.168.0.109:3000/Employees/";
+                    String Url = "http://" + IP + ":3000/Employees/";
 
                     JsonArrayRequest checkEmployee = new JsonArrayRequest(Request.Method.GET, Url, null, new Response.Listener<JSONArray>() {
                         @Override
