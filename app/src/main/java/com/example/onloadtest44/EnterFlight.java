@@ -38,7 +38,7 @@ public class EnterFlight extends AppCompatActivity {
 
 
                 RequestQueue queue = Volley.newRequestQueue(EnterFlight.this);
-                String Url = "http://192.168.0.109:3000/Route/";
+                String Url = "http://" + MainActivity.IP + ":3000/Route/";
 
                 JsonArrayRequest checkTail = new JsonArrayRequest(Request.Method.GET, Url, null, new Response.Listener<JSONArray>() {
                     @Override

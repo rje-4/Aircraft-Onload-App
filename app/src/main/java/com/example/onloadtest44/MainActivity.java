@@ -25,7 +25,7 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    String IP = "192.168.0.109";
+    static String IP = "192.168.0.109";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -207,7 +207,7 @@ public class PosVerify extends AppCompatActivity {
     public void getAssetInfo() {
 
         RequestQueue queue = Volley.newRequestQueue(PosVerify.this);
-        String Url = "http://192.168.0.109:3000/Containers/";
+        String Url = "http://" + MainActivity.IP + ":3000/Containers/";
 
         JsonArrayRequest requestCan = new JsonArrayRequest(Request.Method.GET, Url, null, new Response.Listener<JSONArray>() {
             @Override
@@ -285,7 +285,7 @@ public class PosVerify extends AppCompatActivity {
             if (Objects.equals(finalInspections[k], "true"))
             {
                 RequestQueue queue = Volley.newRequestQueue(PosVerify.this);
-                String Url = "http://192.168.0.109:3000/Containers/" + k;
+                String Url = "http://" + MainActivity.IP + ":3000/Containers/" + k;
 
                 JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -312,7 +312,7 @@ public class PosVerify extends AppCompatActivity {
             if (Objects.equals(finalVerifications[k], "true"))
             {
                 RequestQueue queue = Volley.newRequestQueue(PosVerify.this);
-                String Url = "http://192.168.0.109:3000/Containers/" + k;
+                String Url = "http://" + MainActivity.IP + ":3000/Containers/" + k;
 
                 JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, Url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -1073,7 +1073,7 @@ public class PosVerify extends AppCompatActivity {
 
         if (found)
         {
-            String Url = "http://192.168.0.109:3000/Containers/" + savedIndex;
+            String Url = "http://" + MainActivity.IP + ":3000/Containers/" + savedIndex;
 
             RequestQueue queue = Volley.newRequestQueue(PosVerify.this);
 

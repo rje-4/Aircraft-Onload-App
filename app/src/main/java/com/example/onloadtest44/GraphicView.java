@@ -118,7 +118,7 @@ public class GraphicView extends AppCompatActivity {
             if (Objects.equals(canInspections[i], "true"))
             {
                 RequestQueue queue = Volley.newRequestQueue(GraphicView.this);
-                String Url = "http://192.168.0.109:3000/Containers/" + i;
+                String Url = "http://" + MainActivity.IP + ":3000/Containers/" + i;
 
                 JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -146,7 +146,7 @@ public class GraphicView extends AppCompatActivity {
             if (Objects.equals(canVerifications[i], "true"))
             {
                 RequestQueue queue = Volley.newRequestQueue(GraphicView.this);
-                String Url = "http://192.168.0.109:3000/Containers/" + i;
+                String Url = "http://" + MainActivity.IP + ":3000/Containers/" + i;
 
                 JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, Url, null, new Response.Listener<JSONObject>() {
                     @Override

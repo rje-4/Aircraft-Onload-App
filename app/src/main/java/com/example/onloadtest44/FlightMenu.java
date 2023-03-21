@@ -105,7 +105,7 @@ public class FlightMenu extends AppCompatActivity {
                             int enteredEmployeeNum = Integer.parseInt(String.valueOf(input.getText()));
 
                             RequestQueue queue = Volley.newRequestQueue(FlightMenu.this);
-                            String Url = "http://192.168.0.109:3000/Employees/";
+                            String Url = "http://" + MainActivity.IP + ":3000/Employees/";
 
                             JsonArrayRequest checkEmployee = new JsonArrayRequest(Request.Method.GET, Url, null, new Response.Listener<JSONArray>() {
                                 @Override
