@@ -6,7 +6,7 @@ HOW TO RUN:
 
 Requirements:
   1. Android Studio https://developer.android.com/studio
-  2. NPM Json-Server https://www.npmjs.com/package/json-server
+  2. NPM Json-Server https://www.npmjs.com/package/json-server (Node.js required to be installed)
   
  Instructions:
   1. Download project and open in Android Studio. Do not include 'flight.json'. Separate this file to another directory.
