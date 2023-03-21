@@ -5,8 +5,8 @@ Redesign of FedEx Aircraft Onload Verification Software
 HOW TO RUN:
 
 Requirements:
-  -Android Studio
-  \n-NPM Json-Server
+  1. Android Studio
+  2. NPM Json-Server
   
  Instructions:
   1. Download project and open in Android Studio. Do not include 'flight.json'. Separate this file to another directory.
